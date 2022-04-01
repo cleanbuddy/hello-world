@@ -11,19 +11,9 @@ using std::string;
 #include <vector>
 using std::vector;
 #include <algorithm>
-using std::copy_if;
+using std::copy_if; using std::remove_copy_if; using std::copy;
 #include <iterator>
 using std::back_inserter;
-
-bool Fail(pair<string, int> & v)
-{
-    if (v.second < 600)
-    {
-        cout << v.first << " fails! score: " << v.second << endl;
-        return true;
-    }
-    return false;
-}
 
 bool Pass(pair<string, int> & v)
 {
@@ -37,18 +27,13 @@ bool Pass(pair<string, int> & v)
 
 vector<pair<string, int>> PassFail(vector<pair<string, int>> & v)
 {
+    sort(v.begin(), v.end());
+    for (auto p:v)
     vector<pair<string, int>> passes;
-    vector<pair<string, int>> fails;
-
     copy_if(v.begin(), v.end(), back_inserter(passes), Pass);
-    copy_if(v.begin(), v.end(), back_inserter(fails), Fail);
-
-    sort(passes.begin(), passes.end());
-    sort(fails.begin(), fails.end());
-
-    vector<pair<string, int>> final;
-    copy(passes.begin(), passes.end(), back_inserter(final));
-    copy(fails.begin(), fails.end(), back_inserter(final));
+    v.erase(remove_if(v.begin(), v.end(), [] (const pair<string, int> &p) {return p.second >= 600;}), v.end());
+    vector<pair<string, int>> final = passes;
+    copy(v.begin(), v.end(), back_inserter(final));
 
     return final;
 }
